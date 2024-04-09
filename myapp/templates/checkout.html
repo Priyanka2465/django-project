@@ -1,0 +1,94 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content %}
+<html>
+<head>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>   
+
+    <!-- *** Venues & Tickets ***-->
+    <div class="venue-tickets">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-heading">
+                        <h2>Our Venues & Tickets</h2>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="venue-item">
+                        <div class="thumb">
+                            <img src="{{bookevent.event.event_image.url}}" alt="">
+                        </div>
+                        <div class="down-content">
+                            <div class="left-content">
+                                <div class="main-white-button">
+                                    
+                                    <a href="{% url 'event-details' pk=bookevent.event.pk %}">Details</a>
+                                </div>
+                            </div>
+                            <div class="right-content">
+                                <h4>{{bookevent.event.event_name}}</h4>
+                                <p>{{bookevent.event.event_desc}}</p>
+                               
+                                <div class="price">   
+                                    <span>1 ticket<br>from <em>{{bookevent.event.event_price}}Rs.</em></span>
+                                    {% if bookevent.payment_status == False %}
+                                    <form method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" id="net_price" name="amount" value="{{bookevent.event.event_price}}">
+                                        <button type="buuton" class="btn btn-primary" id="checkout-button">Checkout</button>
+                                    </form>
+                                    {% else %}
+                                    <input type="button" value="Already Paid" class="btn btn-primary" disabled>
+                                    {% endif %}
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+                
+                
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    var stripe= Stripe('pk_test_51Oyyn4SDAnvyJou7qxO9S98ln6f7EjDli4mvFo03v9dbNifp34KaIHnBXTgDVRPPsNPVGnFahtBtMNyKEllpTaC30042btdPPh');
+    var checkoutButton=document.getElementById('checkout-button');
+    alert("Hello2");
+    checkoutButton.addEventListener('click', function()
+    {
+        fetch('/create-checkout-session/',
+        {
+            method:'POST',
+            headers:{
+                'Accept':'application/json',
+                'X-Requested-With':'XMLHttpRequest',//Necessary to work with
+                request.is_ajax()
+            },
+            body: JSON.stringify({'post_data':'{{net_price}}'})
+        }
+        )
+        .then(function(response){
+            return response.json();
+        })
+        .then(function(session){
+            return stripe.redirectToCheckout({ sessionId: session.id });
+        })
+        .then(function(result){
+            if (result.error){
+                alert(result.error.message);
+            }
+        })
+        .catch(function(error){
+            console.error('Error',error);
+        });
+
+    });
+</script>
+</body>
+</html>
+{% endblock %}

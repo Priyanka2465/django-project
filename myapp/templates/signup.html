@@ -1,0 +1,59 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content %}
+
+<section class="ftco-section contact-section bg-light">
+      
+  {% if msg %}
+  <b style="color: blue;" >{{msg}}</b>
+  {% endif %}    
+    <div class="row block-9">
+      
+      <div class="col-md-6 order-md-last d-flex">
+        <form action="{% url 'signup' %}" class="bg-white p-5 contact-form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+           <select name="usertype">
+            <option>----Select User type-----</option>
+            <option value="user">User</option>
+            <option value="manager">Manager</option>
+          </select> 
+          <div class="form-group">
+            <input type="text" class="form-control" name="firstname" placeholder="Your First Name">
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control" name="lastname" placeholder="Your Last Name">
+          </div>
+          <div class="form-group">
+            <input type="email" class="form-control" name="email" placeholder="Your Email">
+          </div>
+          
+          <div class="form-group">
+            <input type="number" class="form-control" name="mobile" placeholder="Your Mobile Number">
+          </div>
+          <div class="form-group">
+            <input type="password" class="form-control" name="password" placeholder="Your Password">
+          </div>
+          <div class="form-group">
+            <input type="password" class="form-control" name="cpassword" placeholder="Your Confirm Password">
+          </div>
+          <div class="form-group">
+            <input type="file" class="form-control" name="profile" >
+          </div> 
+          <div class="form-group">
+            <input type="submit" value="Submit" class="btn btn-primary py-3 px-5">
+          </div>
+        </form>
+      
+      </div>
+      
+      
+    </div>
+  </div>
+</section> 
+
+
+
+
+
+
+{% endblock %}
